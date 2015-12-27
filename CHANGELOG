@@ -1,0 +1,6 @@
+2015-12-27. Version 1.0
+  * Visual Studio Compilation.
+      _CRT_SECURE_NO_WARNINGS preprocessor definitions added to project.
+  * PROTOTYPES define changed from 0 to 1.
+  * snprintf define added.
+  * CHANGELOG file added (this file).
