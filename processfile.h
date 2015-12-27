@@ -43,7 +43,12 @@ struct _fileinfo
 
 	void			*user_data;			/* extra data GUIs might set		*/
 
+#if defined(__WIN32)
+	LARGE_INTEGER	 size;				/* the filesize in LARGE_INTEGER
+										   allows file size >= 4GB			*/
+#else
 	unsigned int	 size;				/* the filesize in bytes			*/
+#endif
 } ;
 
 typedef struct _fileinfo fileinfo;

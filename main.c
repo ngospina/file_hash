@@ -5,8 +5,8 @@
     copyright            : (C) 2002 by Tim-Philipp Müller
     email                : t.i.m@orange.net
     modification         : Thu Nov 28 2013
-                           Sun Dec 27 2015
-	                      (C) 2013 by Gerardo Ospina
+                           Sun Dec 27 2015 
+	                      (C) 2013,2015 by Gerardo Ospina
 	                      ngospina@gmail.com
 ***************************************************************************/
 
@@ -24,7 +24,8 @@
  * This program is a fork of a tool for the eDonkey2000 and overnet file
  * sharing programs.
  *
- * It produces the 'file-hash' of a file or a number of files.
+ * It produces the 'file-hash' and 'file-link' of a file or a number of
+ * files.
  *
  */
 
@@ -201,7 +202,7 @@ static int
 is_directory (char *fn)
 {
     WIN32_FIND_DATA data;
-    HANDLE hFile = FindFirstFile(fn, &data);
+    HANDLE hFile = FindFirstFile(TEXT(fn), &data);
     if (hFile != INVALID_HANDLE_VALUE)
     {
        int ret = 0;
@@ -303,7 +304,7 @@ read_directory (char *fn, SList **p_list)
     strcat(pat, "*.*");
 
     WIN32_FIND_DATA data;
-    HANDLE hFile = FindFirstFile(pat, &data);
+    HANDLE hFile = FindFirstFile(TEXT(pat), &data);
     if (hFile != INVALID_HANDLE_VALUE)
     {
        do

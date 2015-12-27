@@ -5,7 +5,7 @@
     copyright            : (C) 2002 by Tim-Philipp Müller
     email                : t.i.m@orange.net
     modification         : Thu Nov 28 2013
-                           Sun Dec 27 2015 
+                           Sun Dec 27 2015
 	                      (C) 2013,2015 by Gerardo Ospina
 	                      ngospina@gmail.com
 ***************************************************************************/

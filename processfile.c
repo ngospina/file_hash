@@ -47,7 +47,11 @@
 #include "ui.h"
 
 /* functions */
-static unsigned int			get_file_size (const char *fn);
+#if defined(__WIN32)
+static LARGE_INTEGER		get_file_size(const char *fn);
+#else
+static unsigned int			get_file_size(const char *fn);
+#endif
 
 #ifndef FILE_HASH_USE_MMAP
 static int					process_one_block (fileinfo *fi, unsigned int b);
@@ -227,6 +231,83 @@ process_file (const char *fn, fileinfo *info)
 
 /************************** version without mmap() *****************************/
 
+#if defined(__WIN32)
+int
+process_file(const char *fn, fileinfo *info)
+{
+	const char      hexdigits[16] = { '0', '1', '2', '3', '4', '5', '6', '7',
+		'8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
+	unsigned int	b, j;
+	fileinfo		fi;
+
+	if (!fn)
+		return 0;
+
+	memset(&fi, 0x00, sizeof(fi));
+
+	/* get filesize */
+	fi.size = get_file_size(fn);
+	if (fi.size.QuadPart == (LONGLONG)-1)	/* error getting filesize? */
+	{
+		ui_printerr("error getting filesize ('%s')?\n", fn);
+		return 0;
+	}
+
+	if (fi.size.QuadPart == (LONGLONG)0)					/* a filesize of 0 bytes? */
+	{
+		ui_printerr("filesize of 0 bytes ('%s')?\n", fn);
+		return 0;
+	}
+
+	fi.filepath = strdup(fn);
+
+	if (!strrchr(fn, SLASH_CHAR))		/* get the basename without path components */
+	{
+		fi.basename = strdup(fn);
+	}
+	else fi.basename = strdup(strrchr(fn, SLASH_CHAR) + 1);
+
+	fi.blocks = (unsigned int)(fi.size.QuadPart / BLOCKSIZE);
+	if (fi.size.QuadPart % BLOCKSIZE > 0)
+		fi.blocks++;
+
+	fi.file_hash = (unsigned char*)malloc(16);
+	fi.file_hash_str = (char*)malloc(33);
+	fi.parthashes = (unsigned char*)malloc(fi.blocks * 16);	/* 16 bytes for each block's hash */
+
+	if ((!fi.parthashes) || (!fi.file_hash) || (!fi.file_hash_str))
+		return 0;
+
+	for (b = 0; b < fi.blocks; b++)
+	{
+		if (!process_one_block(&fi, b))
+			return 0;
+	}
+
+	/* if only one block: partial hash == final hash */
+	if (fi.blocks>1)
+	{
+		MD4_CTX	context;
+		MD4_Init(&context);
+		MD4_Update(&context, fi.parthashes, 16 * b);
+		MD4_Final(fi.file_hash, &context);
+	}
+	else memcpy(fi.file_hash, fi.parthashes, 16);
+
+
+	/* hash to hash string: */
+	memset(fi.file_hash_str, 0x00, 33 * sizeof(char));
+	for (j = 0; j<16; j++)
+	{
+		fi.file_hash_str[(j << 1)] = hexdigits[(((fi.file_hash[j]) & 0xf0) >> 4)];
+		fi.file_hash_str[(j << 1) + 1] = hexdigits[(((fi.file_hash[j]) & 0x0f))];
+	}
+
+	if (info)
+		memcpy(info, &fi, sizeof(fi));
+	return 1;
+}
+#else
 int
 process_file (const char *fn, fileinfo *info)
 {
@@ -302,6 +383,7 @@ process_file (const char *fn, fileinfo *info)
 
 	return 1;
 }
+#endif
 
 
 
@@ -314,6 +396,93 @@ process_file (const char *fn, fileinfo *info)
  *
  */
 
+#if defined(__WIN32)
+static int
+process_one_block(fileinfo *fi, unsigned int b)
+{
+	MD4_CTX			 context;
+	HANDLE			 f;
+	unsigned int	 blocksize = BLOCKSIZE;
+	unsigned int	 left;
+	unsigned char	 hash[16];
+	LARGE_INTEGER	 Size;
+
+	if ((!fi) || (!fi->parthashes) || (!fi->filepath))
+		return 0;
+
+	f = CreateFile(TEXT(fi->filepath), GENERIC_READ, FILE_SHARE_READ, NULL,
+		OPEN_EXISTING, FILE_ATTRIBUTE_READONLY, NULL);
+	if (f == INVALID_HANDLE_VALUE)
+	{
+		ui_printerr("in %s - CreateFile(%s) failed\n\n", __FUNCTION__, fi->filepath);
+		return 0;
+	}
+
+	Size.QuadPart = ((LONGLONG)b)*((LONGLONG)BLOCKSIZE);
+	if (!SetFilePointerEx(f, Size, NULL, FILE_BEGIN))
+	{
+		ui_printerr("in %s - SetFilePointerEx() failed\n", __FUNCTION__);
+		return 0;
+	}
+
+	if (b == fi->blocks - 1)
+		blocksize = fi->size.QuadPart % BLOCKSIZE;
+
+	if (blocksize == 0)	/* this case shouldn't happen */
+		/* fraca7, 17/05/2003: it happens.
+		return 0; */
+		blocksize = BLOCKSIZE;
+
+	left = blocksize;
+	MD4_Init(&context);
+	while (left>0)
+	{
+		unsigned char	buf[4 * 1024];
+		BOOL 			ret;
+		DWORD			readnow = (DWORD)((left >= sizeof(buf)) ? sizeof(buf) : left);
+		DWORD           read;
+
+		ret = ReadFile(f, buf, readnow, &read, NULL);
+		if (!ret || readnow != read)
+		{
+			ui_printerr("in %s - ReadFile(%s) failed\n", __FUNCTION__, fi->filepath);
+			CloseHandle(f);
+			return 0;
+		}
+
+		MD4_Update(&context, buf, readnow);
+
+		left -= readnow;
+
+		/* JL 30/03/2003: this isn't great with progress bars :) */
+		/*
+		if (!ui_update (fi->filepath, fi->size, fi->size-left))
+		return 0;
+		*/
+		if (!ui_update(fi->filepath, fi->size.LowPart, blocksize - left + b * BLOCKSIZE))
+		{
+			/* JL 18/05/2003 resource leak */
+			CloseHandle(f);
+			return 0;
+		}
+	}
+
+	MD4_Final(hash, &context);
+	memcpy(fi->parthashes + (b * 16), hash, 16);
+
+	if ((option_debug) || (option_verbose))
+	{
+		int k;
+		ui_print("partial hash block %3u: ", b);
+		for (k = 0; k<16; k++)
+			ui_print("%02hx", hash[k]);
+		ui_print("\n");
+	}
+
+	CloseHandle(f);
+	return 1;
+}
+#else
 static int
 process_one_block (fileinfo *fi, unsigned int b)
 {
@@ -395,6 +564,7 @@ process_one_block (fileinfo *fi, unsigned int b)
 	fclose(f);
 	return 1;
 }
+#endif
 
 
 #endif /* ifdef FILE_HASH_USE_MMAP ... else ...*/
@@ -428,6 +598,40 @@ process_file_free_info_structure_content (fileinfo *info)
 
 
 
+#if defined(__WIN32)
+
+/* get_file_size
+*
+* The donkey can only deal with files smaller than 4GB!. This function get
+* filesize even if it is greater than or equal to 4GB
+*
+* returns LARGE_INTEGER.QuadPart == -1 on error, otherwise filesize
+*
+*/
+
+static LARGE_INTEGER
+get_file_size(const char *fn)
+{
+	HANDLE MF;
+	LARGE_INTEGER Size;
+
+	Size.QuadPart = (LONGLONG)-1;
+	if (!fn)
+		return Size;
+
+	MF = CreateFile(TEXT(fn), GENERIC_READ, FILE_SHARE_READ, NULL,
+		OPEN_EXISTING, FILE_ATTRIBUTE_READONLY, NULL);
+	if (MF == INVALID_HANDLE_VALUE)
+	{
+		ui_printerr("in CreateFile(%s)\n\n", fn);
+	}
+	else if (!GetFileSizeEx(MF, &Size))
+	{
+		ui_printerr("in GetFileSizeEx(%s)\n\n", fn);
+	}
+	return Size;
+}
+#else
 /* get_file_size
  *
  * unelegant but portable way to get the size of a file
@@ -469,6 +673,7 @@ get_file_size (const char *fn)
 
 	return (unsigned int)fsize;
 }
+#endif
 
 
 

@@ -28,15 +28,11 @@
 #  define __MAC_OS_X__
 #elif defined(__MACOSX__)
 #  define __MAC_OS_X__
-#endif
+#endif /* defined(__APPLE__) && defined(__GNUC__) */
 
 #endif /* (!defined(__MAC_OS_X__)) */
 
-/* include extra WIN32 stuff if required
- *
- * NOTE: ALL WIN32 STUFF IS NOT TESTED, I JUST WROTE IT HERE AS I THINK MIGHT BE RIGHT
- *
- */
+/* include extra WIN32 stuff if required */
 
 #if defined(_WIN32)	/* detect MS Visual Studio */
 
@@ -46,40 +42,35 @@
 #endif /* defined(_WIN32) */
 
 #ifdef __WIN32__	/* detect Borland c++ Definition and add MS Visual c++ one (???) */
+
 #ifndef WIN32
 #define WIN32
 #endif
-#endif
+
+#endif /* ifdef __WIN32__ */
 
 #ifdef WIN32
-
 // #  define STRICT                        /* XXX - Strict typing, please (do we want this?) */
 #  include <windows.h>
-#  include <direct.h>
-#  include <errno.h>
-#  include <ctype.h>
-#  ifdef _MSC_VER
-#    include <io.h>
-#  endif /* _MSC_VER */
 
 #ifndef alloca
 #include <stdlib.h>
 #include <malloc.h>
 #define alloca _alloca
-#endif
+#endif /* ifndef alloca */
 
 #ifndef strdup
 #include <string.h>
 #define strdup _strdup
-#endif
+#endif /* ifndef strdup */
 
 #ifndef snprintf
 #include <stdio.h>
 #define snprintf _snprintf
-#endif
+#endif /* ifndef snprintf */
 
 #endif /* ifdef WIN32 */
 
-#endif
+#endif /* ifndef _file_hash_global_h_included_ */
 
 

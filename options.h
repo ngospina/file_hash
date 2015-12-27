@@ -25,7 +25,7 @@
 
 #ifndef HAVE_CONFIG_H		/* e.g. on windows plaform */
 # define PACKAGE	"file_hash"
-# define VERSION	"1.0"
+# define VERSION	"1.0.1"
 #else
 # include <config.h>
 #endif /* ifndef HAVE_CONFIG_H */

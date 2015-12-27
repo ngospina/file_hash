@@ -191,16 +191,32 @@ ui_run (SList *filelist)
 			{
 				if (!option_htmllink)
 				{
-					ui_print ("ed2k://|file|%s|%u|%s|\n",
+#if defined(__WIN32)
+					ui_print ("ed2k://|file|%s|%lld|%s|\n",
+						info.basename,
+						info.size.QuadPart,
+						info.file_hash_str);
+#else
+					ui_print("ed2k://|file|%s|%u|%s|\n",
 								info.basename,
 								info.size,
 								info.file_hash_str);
-				} else {
-					ui_print ("<a href=\"ed2k://|file|%s|%u|%s|\">%s</a>\n",
+#endif
+				}
+				else {
+#if defined(__WIN32)
+					ui_print("<a href=\"ed2k://|file|%s|%lld|%s|\">%s</a>\n",
+						info.basename,
+						info.size.QuadPart,
+						info.file_hash_str,
+						(option_htmlfull) ? info.filepath : info.basename);
+#else
+					ui_print("<a href=\"ed2k://|file|%s|%u|%s|\">%s</a>\n",
 								info.basename,
 								info.size,
 								info.file_hash_str,
 								(option_htmlfull) ? info.filepath : info.basename);
+#endif
 				}
 			} else ui_printerr ("while processing file '%s'\n", (char*)node->data);
 			process_file_free_info_structure_content(&info);

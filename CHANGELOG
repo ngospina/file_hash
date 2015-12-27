@@ -1,3 +1,8 @@
+2015-12-27. Version 1.0.1
+
+  * Windows versions of process_file, process_one_block and get_file_size added.
+  * Hashing of files with file size >= 4GB implemented in Windows.
+
 2015-12-27. Version 1.0
   * Visual Studio Compilation.
       _CRT_SECURE_NO_WARNINGS preprocessor definitions added to project.
