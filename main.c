@@ -56,6 +56,7 @@
 #include "linkedlist.h"
 #include "options.h"
 #include "ui.h"				/* user interface */
+#include "fi.h"				/* file interface */
 
 /* functions */
 
@@ -73,7 +74,7 @@ main (int argc, char *argv[])
 {
 	int		 exit_value = EXIT_FAILURE;
 
-	if (ui_init())
+	if (ui_init() && fi_init())
 	{
 		/* ui_setoptions() returns the argument number that is the first file/directory
 		 * specified
@@ -113,7 +114,7 @@ main (int argc, char *argv[])
 		}
 	}
 
-	if (!ui_cleanup())
+	if (!ui_cleanup() && !fi_cleanup())
 		exit_value = EXIT_FAILURE;
 
 	return exit_value;

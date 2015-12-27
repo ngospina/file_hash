@@ -26,6 +26,7 @@
 #include "global.h"
 
 #include "cl_ui.h"
+#include "cl_fi.h"
 #include "options.h"
 #include "processfile.h"
 
@@ -192,11 +193,26 @@ ui_run (SList *filelist)
 				if (!option_htmllink)
 				{
 #if defined(__WIN32)
+					unsigned int time;
+					unsigned int date = get_file_date((char*)node->data, &time);
+
+					fi_print("\"%s\",%lld,\"%s\",%u,%u\n",
+						info.filepath,
+						info.size.QuadPart,
+						info.file_hash_str,
+						date,
+						time);
 					ui_print ("ed2k://|file|%s|%lld|%s|\n",
 						info.basename,
 						info.size.QuadPart,
 						info.file_hash_str);
 #else
+					fi_print("\"%s\",%lld,\"%s\",%u,%u\n",
+						info.filepath,
+						info.size.QuadPart,
+						info.ed2k_hash_str,
+						0,
+						0);
 					ui_print("ed2k://|file|%s|%u|%s|\n",
 								info.basename,
 								info.size,
@@ -205,12 +221,27 @@ ui_run (SList *filelist)
 				}
 				else {
 #if defined(__WIN32)
+					unsigned int time;
+					unsigned int date = get_file_date((char*)node->data, &time);
+
+					fi_print("\"%s\",%lld,\"%s\",%u,%u\n",
+						info.filepath,
+						info.size.QuadPart,
+						info.file_hash_str,
+						date,
+						time);
 					ui_print("<a href=\"ed2k://|file|%s|%lld|%s|\">%s</a>\n",
 						info.basename,
 						info.size.QuadPart,
 						info.file_hash_str,
 						(option_htmlfull) ? info.filepath : info.basename);
 #else
+					fi_print("\"%s\",%lld,\"%s\",%u,%u\n",
+						info.filepath,
+						info.size.QuadPart,
+						info.file_hash_str,
+						0,
+						0);
 					ui_print("<a href=\"ed2k://|file|%s|%u|%s|\">%s</a>\n",
 								info.basename,
 								info.size,
