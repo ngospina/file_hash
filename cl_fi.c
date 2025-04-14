@@ -4,8 +4,9 @@ cl_fi.c  -  description
 begin                : Thu Nov 28 2013
 copyright            : (C) 2013 by Gerardo Ospina
 modification         : Sun Dec 27 2015
-                       (C) 2013,2015 by Gerardo Ospina
-email                : ngospina@gmail.com
+					   Mon Apr 14 2025
+                       (C) 2015,2025 by Gerardo Ospina
+					   ngospina@gmail.com
 ***************************************************************************/
 
 /***************************************************************************
@@ -18,15 +19,18 @@ email                : ngospina@gmail.com
 ***************************************************************************/
 
 #include <stdio.h>
+#include <stdarg.h>
+#include <time.h>
 
 #include "global.h"
+
+#if defined(__UNIX)
+# include <sys/stat.h>
+#endif
+
 #include "cl_ui.h"
 #include "cl_fi.h"
 #include "options.h"
-
-#if defined(__WIN32)
-#include <Windows.h>
-#endif
 
 static FILE *fp;
 
@@ -71,24 +75,24 @@ int	fi_print(const char *format, ...)
 *       5-8 : Month (1=January, 2=February, etc.)
 *       9-15: Year offset from 1980 (add 1980 to get the actual year)
 *
-* *time get file time in DOS Time format:
+* *time: get file time in DOS Time format:
 *   bit  0-4 : Second divided by 2
 *        5-10: Minute (0-59)
         11-15: Hour (0-23 on a 24 hour clock)
 */
 
-#if defined(__WIN32)
 unsigned int
 get_file_date(const char *fn, unsigned int *time)
 {
+	if (!fn)
+		return (unsigned int)-1;
+
+#if defined(__WIN32)
 	WORD fdate, ftime;
 	HANDLE hFile;
 	FILETIME ftCreation, ftLastAccess, ftLastWrite;
 
 	*time = 0;
-	if (!fn)
-		return (unsigned int)-1;
-
 	hFile = CreateFile(TEXT(fn), GENERIC_READ, FILE_SHARE_READ, NULL,
 		OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (hFile == INVALID_HANDLE_VALUE)
@@ -112,14 +116,38 @@ get_file_date(const char *fn, unsigned int *time)
 	CloseHandle(hFile);
 
 	*time = (unsigned int)ftime;
+	
 	return (unsigned int)fdate;
-}
+#elif defined(__UNIX)
+  struct stat st;
+  struct tm *tm_info;
+
+  if (stat(fn, &st) != 0) {
+	ui_printerr("Error getting file stats for %s\n", fn);
+	return (unsigned int)-1;
+  }
+
+  tm_info = localtime(&st.st_mtime);
+  if (!tm_info) {
+   	ui_printerr("Error converting time for %s\n", fn);
+	return (unsigned int)-1;
+  }
+
+  /* Convert to DOS date format */
+  unsigned int date = (unsigned int)(((tm_info->tm_year - 80) << 9) |  /* Years since 1980 */
+				   ((tm_info->tm_mon + 1) << 5) |                      /* Month (1-12) */
+				   tm_info->tm_mday);                                  /* Day (1-31) */
+
+  /* Convert to DOS time format */
+  *time = (unsigned int)((tm_info->tm_hour << 11) |   /* Hours (0-23) */
+		(tm_info->tm_min << 5) |                      /* Minutes (0-59) */
+		(tm_info->tm_sec >> 1));                      /* Seconds/2 (0-29) */
+		
+  return date;
 #else
-unsigned int
-get_file_date(const char *fn, unsigned int *time)
-{
 	*time = 0;
 	ui_print ("IMPLEMENT ME FOR THIS OPERATING SYSTEM/PLATFORM: %s\n", __FUNCTION__);
+
 	return 0;
-}
 #endif
+}

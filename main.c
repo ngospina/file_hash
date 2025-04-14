@@ -2,12 +2,13 @@
                           main.c  -  description
                              -------------------
     begin                : Mon Sep  2 19:30:41 BST 2002
-    copyright            : (C) 2002 by Tim-Philipp Müller
+    copyright            : (C) 2002 by Tim-Philipp Mï¿½ller
     email                : t.i.m@orange.net
     modification         : Thu Nov 28 2013
-                           Sun Dec 27 2015 
-	                      (C) 2013,2015 by Gerardo Ospina
-	                      ngospina@gmail.com
+                           Sun Dec 27 2015
+						   Mon Apr 14 2025 
+	                       (C) 2013,2015,2025 by Gerardo Ospina
+	                       ngospina@gmail.com
 ***************************************************************************/
 
 /***************************************************************************
@@ -35,23 +36,17 @@
 
 #include "global.h"
 
-#if (defined(__linux__) || defined(__MAC_OS_X__) || defined(__FreeBSD__) || (defined(sun) && defined(__svr4__)))
+#if defined(__UNIX)
 # include <sys/types.h>
 # include <sys/stat.h>
 # include <unistd.h>
 # include <dirent.h>
 #endif
 
-#ifdef __WIN32
-# include <windows.h>
-#endif
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
-
-#include "global.h"
 
 #include "linkedlist.h"
 #include "options.h"
@@ -170,8 +165,7 @@ expand_if_directory (char *fn, SList **p_list)
  *
  */
 
-#if (defined(__linux__) || defined(__MAC_OS_X__) || defined(__FreeBSD__) || (defined(sun) && defined(__svr4__)))
-
+#if defined(__UNIX)
 static int
 is_directory (char *fn)
 {
@@ -242,7 +236,7 @@ is_directory (char *fn)
  *
  */
 
-#if (defined(__linux__) || defined(__MAC_OS_X__) || defined(__FreeBSD__) || (defined(sun) && defined(__svr4__)))
+#if defined(__UNIX)
 
 static int
 read_directory (char *fn, SList **p_list)
@@ -351,9 +345,3 @@ read_directory (char *fn, SList **p_list)
 }
 
 #endif
-
-
-
-
-
-

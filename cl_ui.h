@@ -2,12 +2,13 @@
                           cl_ui.h  -  description
                              -------------------
     begin                : Mon Sep 2 2002
-    copyright            : (C) 2002 by Tim-Philipp Müller
+    copyright            : (C) 2002 by Tim-Philipp Mï¿½ller
     email                : t.i.m@orange.net
     modification         : Thu Nov 28 2013
                            Sun Dec 27 2015
-	                      (C) 2013,2015 by Gerardo Ospina
-	                      ngospina@gmail.com
+                           Mon Apr 14 2025
+	                        (C) 2013,2015,2025 by Gerardo Ospina
+	                        ngospina@gmail.com
 	***************************************************************************/
 
 /***************************************************************************
@@ -35,8 +36,3 @@ int			ui_run (SList *filelist);
 int			ui_update (char *filepath, unsigned int size, unsigned int done);
 
 #endif /* ifndef _file_hash_cl_ui_h_included_ */
-
-
-
-
-

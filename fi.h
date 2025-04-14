@@ -3,9 +3,11 @@ fi.h  -  description
 -------------------
 begin                : Thu Nov 28 2013
 copyright            : (C) 2013 by Gerardo Ospina
-modification         : Thu Dec 25 2014
-	                  (C) 2013, 2014 by Gerardo Ospina
 email                : ngospina@gmail.com
+modification         : Thu Dec 25 2014
+                       Mon Apr 14 2025
+	                   (C) 2014,2025 by Gerardo Ospina
+	                   ngospina@gmail.com
 ***************************************************************************/
 
 /***************************************************************************
@@ -23,5 +25,3 @@ email                : ngospina@gmail.com
 #include "cl_fi.h"	/* command line interface is all we have for the moment */
 
 #endif /* ifndef _file_hash_fi_h_included_ */
-
-

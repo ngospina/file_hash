@@ -2,12 +2,13 @@
                           linkedlist.h  -  description
                              -------------------
     begin                : Mon Sep 2 2002
-    copyright            : (C) 2002 by Tim-Philipp Müller
+    copyright            : (C) 2002 by Tim-Philipp Mï¿½ller
     email                : t.i.m@orange.net
     modification         : Thu Nov 28 2013
                            Sun Dec 27 2015
-	                      (C) 2013,2015 by Gerardo Ospina
-	                      ngospina@gmail.com
+                           Mon Apr 14 2025
+	                        (C) 2013,2015,2025 by Gerardo Ospina
+	                        ngospina@gmail.com
 ***************************************************************************/
 
 /***************************************************************************
@@ -37,5 +38,3 @@ SList			*slist_append (SList *list, void *data);
 unsigned int	 slist_length (SList *list);
 
 #endif /* ifndef _file_hash_linkedlist_h_included_ */
-
-

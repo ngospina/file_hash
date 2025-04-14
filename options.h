@@ -2,12 +2,13 @@
                           options.h  -  description
                              -------------------
     begin                : Mon Sep 2 2002
-    copyright            : (C) 2002 by Tim-Philipp Müller
+    copyright            : (C) 2002 by Tim-Philipp Mï¿½ller
     email                : t.i.m@orange.net
     modification         : Thu Nov 28 2013
                            Sun Dec 27 2015
-	                      (C) 2013,2015 by Gerardo Ospina
-	                      ngospina@gmail.com
+                           Mon Apr 14 2025
+	                        (C) 2013,2015,2025 by Gerardo Ospina
+	                        ngospina@gmail.com
 	***************************************************************************/
 
 /***************************************************************************
@@ -25,7 +26,7 @@
 
 #ifndef HAVE_CONFIG_H		/* e.g. on windows plaform */
 # define PACKAGE	"file_hash"
-# define VERSION	"1.0.2"
+# define VERSION	"1.0.3"
 #else
 # include <config.h>
 #endif /* ifndef HAVE_CONFIG_H */
@@ -42,10 +43,7 @@ extern int			option_waitwhenfinito; /* wait for keystroke when finished */
 
 /* functions */
 
-int		options_process_cl_argument (char *argv[], int *i);
+int	options_process_cl_argument (char *argv[], int *i);
 void	options_print_help_screen_and_exit (void);
 
 #endif /* ifndef _file_hash_options_h_included_ */
-
-
-

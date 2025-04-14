@@ -4,6 +4,9 @@ cl_fi.h  -  description
 begin                : Thu Nov 28 2013
 copyright            : (C) 2013 by Gerardo Ospina
 email                : ngospina@gmail.com
+modification         : Mon Apr 14 2025
+	                   (C) 2025 by Gerardo Ospina
+	                   ngospina@gmail.com
 ***************************************************************************/
 
 /***************************************************************************

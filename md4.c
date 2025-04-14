@@ -2,8 +2,11 @@
                           md4.c  -  description
                              -------------------
     begin                : Tue Sep 3 2002
-    copyright            : (C) 2002 by Tim-Philipp Müller
+    copyright            : (C) 2002 by Tim-Philipp Mï¿½ller
     email                : t.i.m@orange.net
+    modification         : Mon Apr 14 2025 
+	                         (C) 2025 by Gerardo Ospina
+	                         ngospina@gmail.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -334,7 +337,4 @@ MD4 (unsigned char *data, unsigned int len, unsigned char *md)
 }
 */
 
-
 #endif /* ifndef HAVE_OPENSSL */
-
-

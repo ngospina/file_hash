@@ -2,12 +2,13 @@
                           global.h  -  description
                              -------------------
     begin                : Fri Nov 22 2002
-    copyright            : (C) 2002 by Tim-Philipp Müller
+    copyright            : (C) 2002 by Tim-Philipp Mï¿½ller
     email                : t.i.m@orange.net
     modification         : Thu Nov 28 2013
                            Sun Dec 27 2015
-	                      (C) 2013,2015 by Gerardo Ospina
-	                      ngospina@gmail.com
+                           Mon Apr 14 2025
+	                        (C) 2013,2015,2025 by Gerardo Ospina
+	                        ngospina@gmail.com
 *************************************************************************** /
 
 /***************************************************************************
@@ -32,16 +33,19 @@
 
 #endif /* (!defined(__MAC_OS_X__)) */
 
+#if (defined(__linux__) || defined(__MAC_OS_X__) || defined(__FreeBSD__) || (defined(sun) && defined(__svr4__)))
+#define __UNIX
+#endif
+
 /* include extra WIN32 stuff if required */
 
 #if defined(_WIN32)	/* detect MS Visual Studio */
 
 #  define WIN32
-#  define __WIN32
 
 #endif /* defined(_WIN32) */
 
-#ifdef __WIN32__	/* detect Borland c++ Definition and add MS Visual c++ one (???) */
+#if defined(__WIN32__)	/* detect Borland c++ Definition and add MS Visual c++ one (???) */
 
 #ifndef WIN32
 #define WIN32
@@ -49,7 +53,9 @@
 
 #endif /* ifdef __WIN32__ */
 
-#ifdef WIN32
+#if defined(WIN32)
+#  define __WIN32
+
 // #  define STRICT                        /* XXX - Strict typing, please (do we want this?) */
 #  include <windows.h>
 
@@ -72,5 +78,3 @@
 #endif /* ifdef WIN32 */
 
 #endif /* ifndef _file_hash_global_h_included_ */
-
-

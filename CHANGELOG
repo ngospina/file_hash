@@ -1,3 +1,8 @@
+2025-14-04. Version 1.0.3
+
+  * Hashing of files with file size >= 4GB implemented in Unix.
+  * get_file_date function implemented in Unix.
+
 2015-12-27. Version 1.0.2
 
   * csv log file added.

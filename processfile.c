@@ -2,12 +2,13 @@
                           processfile.c  -  description
                              -------------------
     begin                : Tue Sep 3 2002
-    copyright            : (C) 2002 by Tim-Philipp Müller
+    copyright            : (C) 2002 by Tim-Philipp Mï¿½ller
     email                : t.i.m@orange.net
     modification         : Thu Nov 28 2013
                            Sun Dec 27 2015
-	                      (C) 2013,2015 by Gerardo Ospina
-	                      ngospina@gmail.com
+						   Mon Apr 14 2025
+	                       (C) 2013,2015,2025 by Gerardo Ospina
+	                       ngospina@gmail.com
 ***************************************************************************/
 
 /***************************************************************************
@@ -21,6 +22,11 @@
 
 #include "global.h"
 
+#if defined(__UNIX)
+# define _LARGEFILE64_SOURCE
+# define _FILE_OFFSET_BITS 64
+#endif
+ 
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -30,7 +36,7 @@
 
 /* for nmap on unix systems             */
 /* TODO: add other *nix OS defines here */
-#if (defined(__linux__) || defined(__MAC_OS_X__) || defined(__FreeBSD__) || (defined(sun) && defined(__svr4__)))
+#if defined(__UNIX)
 #  include <unistd.h>
 #  include <sys/mman.h>
 #  include <sys/types.h>
@@ -47,11 +53,7 @@
 #include "ui.h"
 
 /* functions */
-#if defined(__WIN32)
-static LARGE_INTEGER		get_file_size(const char *fn);
-#else
-static unsigned int			get_file_size(const char *fn);
-#endif
+static unsigned long long	get_file_size(const char *fn);
 
 #ifndef FILE_HASH_USE_MMAP
 static int					process_one_block (fileinfo *fi, unsigned int b);
@@ -73,10 +75,8 @@ static int					process_one_block (fileinfo *fi, unsigned int b);
  */
 
 #ifdef FILE_HASH_USE_MMAP
-
 /************************** version with mmap() ********************************/
 /* version using mmap() by Thomas Lussnig <thomas.lussnig@bewegungsmelder.de> */
-
 int
 process_file (const char *fn, fileinfo *info)
 {
@@ -94,7 +94,7 @@ process_file (const char *fn, fileinfo *info)
 	memset (&fi,0x00,sizeof(fi));
 
 	/* get filesize */
-	fi.size = get_file_size (fn);
+	fi.size = get_file_size(fn);
 	if (fi.size == (unsigned int)-1)	/* error getting filesize? */
 	{
 		ui_printerr ("error getting filesize ('%s')?\n", fn);
@@ -222,15 +222,8 @@ process_file (const char *fn, fileinfo *info)
 
 	return 1;
 }
-
-
-
 #else
-
-
-
 /************************** version without mmap() *****************************/
-
 #if defined(__WIN32)
 int
 process_file(const char *fn, fileinfo *info)
@@ -323,7 +316,7 @@ process_file (const char *fn, fileinfo *info)
 	memset (&fi,0x00,sizeof(fi));
 
 	/* get filesize */
-	fi.size = get_file_size (fn);
+	fi.size = get_file_size(fn);
 	if (fi.size == (unsigned int)-1)	/* error getting filesize? */
 	{
 		ui_printerr ("error getting filesize ('%s')?\n", fn);
@@ -384,8 +377,6 @@ process_file (const char *fn, fileinfo *info)
 	return 1;
 }
 #endif
-
-
 
 /* process_one_block
  *
@@ -566,7 +557,6 @@ process_one_block (fileinfo *fi, unsigned int b)
 }
 #endif
 
-
 #endif /* ifdef FILE_HASH_USE_MMAP ... else ...*/
 
 /* process_file_free_info_structure_content
@@ -598,18 +588,17 @@ process_file_free_info_structure_content (fileinfo *info)
 
 
 
-#if defined(__WIN32)
-
 /* get_file_size
 *
 * The donkey can only deal with files smaller than 4GB!. This function get
 * filesize even if it is greater than or equal to 4GB
 *
-* returns LARGE_INTEGER.QuadPart == -1 on error, otherwise filesize
+* returns -1 on error, otherwise filesize
 *
 */
 
-static LARGE_INTEGER
+#if defined(__WIN32)
+static unsigned long long
 get_file_size(const char *fn)
 {
 	HANDLE MF;
@@ -629,54 +618,23 @@ get_file_size(const char *fn)
 	{
 		ui_printerr("in GetFileSizeEx(%s)\n\n", fn);
 	}
-	return Size;
+	return (unsigned long long)Size;
 }
 #else
-/* get_file_size
- *
- * unelegant but portable way to get the size of a file
- *
- * returns (unsigned int)-1 on error, otherwise filesize
- *
- */
-
-static unsigned int
-get_file_size (const char *fn)
+static unsigned long long
+get_file_size(const char *fn)
 {
-	FILE			*file;
-	unsigned long	 fsize;
-
+	struct stat64 st;
+	
 	if (!fn)
-		return (unsigned int)-1;
+		return (unsigned long long)-1;
 
-	file = fopen(fn, "rb");
-	if (!file)
+	if (stat64(fn, &st) != 0)
 	{
-		ui_printerr ("in fopen(%s) - %s\n\n", fn, strerror(errno));
-		return (unsigned int)-1;
+		ui_printerr ("in stat64(%s) - %s\n\n", fn, strerror(errno));
+		return (unsigned long long)-1;
 	}
 
-	if (fseek(file, 0, SEEK_END)<0)		/* go to very last byte of file */
-		return (unsigned int)-1;
-
-	fsize = ftell(file);				/* and tell us which no. that is */
-	if (fsize == (unsigned long) -1)
-		return (unsigned int)-1;
-
-	fclose(file);
-
-	if (fsize > (unsigned long)((unsigned int)-1))
-	{
-		ui_printerr ("the file %s is too big. The donkey can only deal with files smaller than 4GB!\n\n", fn);
-		return ((unsigned int)-1);
-	}
-
-	return (unsigned int)fsize;
+	return (unsigned long long)st.st_size;
 }
 #endif
-
-
-
-
-
-

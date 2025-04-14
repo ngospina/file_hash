@@ -2,12 +2,13 @@
                           processfile.h  -  description
                              -------------------
     begin                : Tue Sep 3 2002
-    copyright            : (C) 2002 by Tim-Philipp Müller
+    copyright            : (C) 2002 by Tim-Philipp Mï¿½ller
     email                : t.i.m@orange.net
     modification         : Thu Nov 28 2013
                            Sun Dec 27 2015
-	                      (C) 2013,2015 by Gerardo Ospina
-	                      ngospina@gmail.com
+						   Mon Apr 14 2025
+	                       (C) 2013,2015,2025 by Gerardo Ospina
+	                       ngospina@gmail.com
 ***************************************************************************/
 
 /***************************************************************************
@@ -53,12 +54,7 @@ struct _fileinfo
 
 typedef struct _fileinfo fileinfo;
 
-
 int		process_file (const char *fn, fileinfo *info);
 void	process_file_free_info_structure_content(fileinfo *info);
 
-
 #endif /* ifndef _file_hash_processfile_h_included_ */
-
-
-

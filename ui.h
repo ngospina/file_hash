@@ -2,12 +2,12 @@
                           ui.h  -  description
                              -------------------
     begin                : Tue Sep 3 2002
-    copyright            : (C) 2002 by Tim-Philipp Müller
+    copyright            : (C) 2002 by Tim-Philipp Mï¿½ller
     email                : t.i.m@orange.net
     modification         : Thu Nov 28 2013
                            Sun Dec 27 2015
-	                      (C) 2013,2015 by Gerardo Ospina
-	                      ngospina@gmail.com
+	                        (C) 2013,2015 by Gerardo Ospina
+	                        ngospina@gmail.com
 ***************************************************************************/
 
 /***************************************************************************

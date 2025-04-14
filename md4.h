@@ -2,12 +2,13 @@
                           md4.h  -  description
                              -------------------
     begin                : Tue Sep 3 2002
-    copyright            : (C) 2002 by Tim-Philipp Müller
+    copyright            : (C) 2002 by Tim-Philipp Mï¿½ller
     email                : t.i.m@orange.net
     modification         : Thu Nov 28 2013
                            Sun Dec 27 2015
-	                      (C) 2013,2015 by Gerardo Ospina
-	                      ngospina@gmail.com
+                           Mon Apr 14 2025
+	                         (C) 2013,2015,2025 by Gerardo Ospina
+	                         ngospina@gmail.com
 ***************************************************************************/
 
 /***************************************************************************
@@ -104,9 +105,6 @@ void MD4Final PROTO_LIST ((unsigned char [16], MD4_CTX *));
 
 /*unsigned char *MD4 (unsigned char *data, unsigned int len, unsigned char *md);*/
 
-
 #endif	/* ifdef HAVE_OPENSSL */
 
 #endif	/* ifndef _file_hash_md4_h_included_ */
-
-

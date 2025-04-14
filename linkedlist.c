@@ -2,9 +2,12 @@
                           linkedlist.c  -  description
                              -------------------
     begin                : Mon Sep 2 2002
-    copyright            : (C) 2002 by Tim-Philipp Müller
+    copyright            : (C) 2002 by Tim-Philipp Mï¿½ller
     email                : t.i.m@orange.net
- ***************************************************************************/
+    modification         : Mon Apr 14 2025
+	                       (C) 2025 by Gerardo Ospina
+	                       ngospina@gmail.com
+***************************************************************************/
 
 /***************************************************************************
  *                                                                         *
@@ -76,7 +79,3 @@ slist_length (SList *list)
 	}
 	return num;
 }
-
-
-
-

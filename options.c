@@ -2,12 +2,13 @@
                           options.c  -  description
                              -------------------
     begin                : Mon Sep 2 2002
-    copyright            : (C) 2002 by Tim-Philipp Müller
+    copyright            : (C) 2002 by Tim-Philipp Mï¿½ller
     email                : t.i.m@orange.net
     modification         : Thu Nov 28 2013
                            Sun Dec 27 2015
-	                      (C) 2013,2015 by Gerardo Ospina
-	                      ngospina@gmail.com
+						   Mon Apr 14 2025
+	                       (C) 2013,2015,2025 by Gerardo Ospina
+	                       ngospina@gmail.com
 ***************************************************************************/
 
 /***************************************************************************
@@ -19,6 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <string.h>
 #include <stdlib.h>
 
 #include "global.h"
@@ -152,7 +154,7 @@ void
 options_print_help_screen_and_exit (void)
 {
 	ui_print ("\n%s v%s (build %s)\n\n", PACKAGE, VERSION, __DATE__);
-	ui_print ("Copyright (C) 2001-2002 by Tim-Philipp Müller\n");
+	ui_print ("Copyright (C) 2001-2002 by Tim-Philipp Mï¿½ller\n");
 
 #ifndef HAVE_OPENSSL
 	ui_print ("Copyright (C) 1990-2, RSA Data Security, Inc. (MD4 hashing functions only)\n");

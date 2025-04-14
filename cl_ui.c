@@ -2,12 +2,13 @@
                           cl_ui.c  -  description
                              -------------------
     begin                : Mon Sep 2 2002
-    copyright            : (C) 2002 by Tim-Philipp Müller
+    copyright            : (C) 2002 by Tim-Philipp Mï¿½ller
     email                : t.i.m@orange.net
     modification         : Thu Nov 28 2013
                            Sun Dec 27 2015
-	                      (C) 2013,2015 by Gerardo Ospina
-	                      ngospina@gmail.com
+						   Mon Apr 14 2025
+	                       (C) 2013,2015,2025 by Gerardo Ospina
+	                       ngospina@gmail.com
 ***************************************************************************/
 
 /***************************************************************************
@@ -19,6 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdarg.h>
@@ -192,10 +194,10 @@ ui_run (SList *filelist)
 			{
 				if (!option_htmllink)
 				{
-#if defined(__WIN32)
-					unsigned int time;
-					unsigned int date = get_file_date((char*)node->data, &time);
+    				unsigned int time;
+	    			unsigned int date = get_file_date((char*)node->data, &time);
 
+#if defined(__WIN32)
 					fi_print("\"%s\",%lld,\"%s\",%u,%u\n",
 						info.filepath,
 						info.size.QuadPart,
@@ -209,10 +211,10 @@ ui_run (SList *filelist)
 #else
 					fi_print("\"%s\",%lld,\"%s\",%u,%u\n",
 						info.filepath,
-						info.size.QuadPart,
-						info.ed2k_hash_str,
-						0,
-						0);
+						info.size,
+						info.file_hash_str,
+						date,
+						time);
 					ui_print("ed2k://|file|%s|%u|%s|\n",
 								info.basename,
 								info.size,
@@ -220,10 +222,10 @@ ui_run (SList *filelist)
 #endif
 				}
 				else {
-#if defined(__WIN32)
 					unsigned int time;
 					unsigned int date = get_file_date((char*)node->data, &time);
 
+#if defined(__WIN32)
 					fi_print("\"%s\",%lld,\"%s\",%u,%u\n",
 						info.filepath,
 						info.size.QuadPart,
@@ -238,10 +240,10 @@ ui_run (SList *filelist)
 #else
 					fi_print("\"%s\",%lld,\"%s\",%u,%u\n",
 						info.filepath,
-						info.size.QuadPart,
+						info.size,
 						info.file_hash_str,
-						0,
-						0);
+						date,
+						time);
 					ui_print("<a href=\"ed2k://|file|%s|%u|%s|\">%s</a>\n",
 								info.basename,
 								info.size,
@@ -273,5 +275,3 @@ ui_update (char *filepath, unsigned int size, unsigned int done)
 {
 	return 1;	/* nothing to do for us here */
 }
-
-
